@@ -3,27 +3,28 @@
 Solution to lockboxes problem
 """
 
+
 def canUnlockAll(boxes):
     """
     Determines whether a series of locked boxes can be opened
     based on keys that can be attained.
     Solution to the lockboxes problem
     """
-    # Check if the input is a list
-    if not isinstance(boxes, list):
+    if (type(boxes)) is not list:
         return False
-    # Check if the list is empty
-    if len(boxes) == 0:
+    elif (len(boxes)) == 0:
         return False
 
-    for k in range(1, len(boxes)):
-        boxes_checked = False
-        # Check each box to see if it contains the key for box k
-        for idx, box in enumerate(boxes):
-            if k in box and k != idx:
-                boxes_checked = True
-                break
-        if not boxes_checked:
-            return False
-    return True
+    unlocked = [False] * (len(boxes))
+    unlocked[0] = True
+    keys = [0]
+
+    while keys:
+        current_key = keys.pop()
+        for key in boxes[current_key]:
+            if key < len(boxes) and not unlocked[key]:
+                unlocked[key] = True
+                keys.append(key)
+
+    return all(unlocked)
 
