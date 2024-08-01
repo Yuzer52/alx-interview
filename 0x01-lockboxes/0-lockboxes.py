@@ -3,7 +3,7 @@ def canUnlockAll(boxes):
     unlocked = [False] * n
     unlocked[0] = True  # The first box is unlocked
 
-    keys = [0]  # Starting with the keys in the first box
+    keys = [0]  # Start with the keys in the first box
 
     while keys:
         current_key = keys.pop()
@@ -14,13 +14,4 @@ def canUnlockAll(boxes):
     
     return all(unlocked)
 
-# Example usage:
-boxes = [[1], [2], [3], []]
-print(canUnlockAll(boxes))  
-
-boxes = [[1, 3], [3, 0, 1], [2], [0]]
-print(canUnlockAll(boxes))  
-
-boxes = [[1, 2, 3], [], [1, 3], [2]]
-print(canUnlockAll(boxes))  
 
