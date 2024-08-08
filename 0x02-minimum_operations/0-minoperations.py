@@ -4,6 +4,7 @@
     Copy All and Paste operations.
 """
 
+
 def minOperations(n):
     """
     Calculate the minimum number of operations needed to result
@@ -11,8 +12,8 @@ def minOperations(n):
 
     Args:
         n (int): The target number of 'H' characters.
-    
-    Returns:
+                factor_list: List to save the operations
+    Return:
         int: The minimum number of operations required to achieve
              n 'H' characters, or 0 if n is less than 2.
     """
@@ -30,4 +31,3 @@ def minOperations(n):
                 factor_list.append(i)
 
     return sum(factor_list)
-
