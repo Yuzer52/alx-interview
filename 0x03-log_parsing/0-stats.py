@@ -59,4 +59,3 @@ except KeyboardInterrupt:
     # Handle any remaining output on keyboard interrupt
     print_stats(stats, filesize)
     raise
-
