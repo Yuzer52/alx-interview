@@ -1,24 +1,28 @@
 #!/usr/bin/python3
+"""
+Log parsing
+"""
+
 import sys
 import signal
 
 # Initialize metrics
-total_file_size = 0
-status_code_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
+filesize, count = 0, 0
+codes = ["200", "301", "400", "401", "403", "404", "405", "500"]
+stats = {code: 0 for code in codes}
 
 
-def print_statistics():
+def print_stats(stats: dict, filesize: int) -> None:
     """Prints the current statistics."""
-    print(f"File size: {total_file_size}")
-    for code in sorted(status_code_counts.keys()):
-        if status_code_counts[code] > 0:
-            print(f"{code}: {status_code_counts[code]}")
+    print("File size: {:d}".format(filesize))
+    for code, value in sorted(stats.items()):
+        if value:
+            print("{}: {}".format(code, value))
 
 
 def handle_interrupt(signal, frame):
     """Handle keyboard interruption (CTRL + C)."""
-    print_statistics()
+    print_stats(stats, filesize)
     sys.exit(0)
 
 
@@ -28,37 +32,31 @@ signal.signal(signal.SIGINT, handle_interrupt)
 # Read from stdin line by line
 try:
     for line in sys.stdin:
-        line_count += 1
+        count += 1
+        data = line.split()
         try:
-            # Split the line into components
-            parts = line.split()
-
-            # Check for the correct format and extract values
-            if len(parts) >= 9 and parts[2] == '"GET' and parts[3].startswith("/projects/260"):
-                # Extract status code and file size
-                status_code = int(parts[-2])
-                file_size = int(parts[-1])
-
-                # Update total file size
-                total_file_size += file_size
-
-                # Update status code count if valid
-                if status_code in status_code_counts:
-                    status_code_counts[status_code] += 1
-
-            # Every 10 lines, print statistics
-            if line_count % 10 == 0:
-                print_statistics()
-
+            # Extract status code and update counts
+            status_code = data[-2]
+            if status_code in stats:
+                stats[status_code] += 1
         except Exception:
-            # Skip the line if there's an error parsing
-            continue
+            pass
+
+        try:
+            # Extract and accumulate file size
+            filesize += int(data[-1])
+        except Exception:
+            pass
+
+        # Print stats every 10 lines
+        if count % 10 == 0:
+            print_stats(stats, filesize)
+
+    # Print final stats after input ends
+    print_stats(stats, filesize)
 
 except KeyboardInterrupt:
     # Handle any remaining output on keyboard interrupt
-    print_statistics()
-    sys.exit(0)
-
-# Print the final statistics after the input ends
-print_statistics()
+    print_stats(stats, filesize)
+    raise
 
